@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Book Reader Web Application</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation Header -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-navy fixed-top">
+        <div class="container-fluid">
+            <button class="btn btn-outline-light me-3" id="sidebarToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-book-open text-primary me-2"></i>
+                BookReader
+            </a>
+            <div class="navbar-nav ms-auto">
+                <span class="navbar-text">Your Digital Library</span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-lg-3 col-md-4 sidebar bg-dark-blue" id="sidebar">
+                <div class="sidebar-content p-4">
+                    <h5 class="text-light mb-4">
+                        <i class="fas fa-search me-2"></i>Search & Filter
+                    </h5>
+                    
+                    <!-- Search -->
+                    <div class="mb-4">
+                        <label class="form-label text-light">Search Books</label>
+                        <input type="text" class="form-control bg-navy text-light border-secondary" 
+                               id="searchInput" placeholder="Title, author, ISBN...">
+                    </div>
+
+                    <!-- Filters -->
+                    <div class="mb-4">
+                        <label class="form-label text-light">Genre</label>
+                        <select class="form-select bg-navy text-light border-secondary" id="genreFilter">
+                            <option value="">All Genres</option>
+                            <option value="Classic Literature">Classic Literature</option>
+                            <option value="Science Fiction">Science Fiction</option>
+                            <option value="Romance">Romance</option>
+                            <option value="Fantasy">Fantasy</option>
+                            <option value="Dystopian Fiction">Dystopian Fiction</option>
+                            <option value="Literary Fiction">Literary Fiction</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label text-light">Format</label>
+                        <select class="form-select bg-navy text-light border-secondary" id="formatFilter">
+                            <option value="">All Formats</option>
+                            <option value="EPUB">EPUB</option>
+                            <option value="PDF">PDF</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label text-light">Reading Status</label>
+                        <select class="form-select bg-navy text-light border-secondary" id="statusFilter">
+                            <option value="">All Status</option>
+                            <option value="To Read">To Read</option>
+                            <option value="Reading">Reading</option>
+                            <option value="Finished">Finished</option>
+                        </select>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="mt-5">
+                        <h6 class="text-light mb-3">Quick Actions</h6>
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-outline-light btn-sm" id="favoritesBtn">
+                                <i class="fas fa-heart me-2"></i>View Favorites
+                            </button>
+                            <button class="btn btn-outline-light btn-sm" id="libraryBtn">
+                                <i class="fas fa-book me-2"></i>My Library
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-lg-9 col-md-8 main-content">
+                <!-- Library View -->
+                <div id="libraryView" class="view-section">
+                    <div class="p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div>
+                                <h2 class="text-light mb-2">Your Library</h2>
+                                <p class="text-muted" id="bookCount">6 books available</p>
+                            </div>
+                        </div>
+
+                        <div class="row" id="booksGrid">
+                            <!-- Books will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Book Detail View -->
+                <div id="bookDetailView" class="view-section d-none">
+                    <div class="p-4">
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <div class="book-cover-large mb-4">
+                                    <img id="detailCover" src="" alt="" class="img-fluid rounded shadow-lg">
+                                    <div class="progress mt-3" id="detailProgress" style="display: none;">
+                                        <div class="progress-bar bg-primary" role="progressbar"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="d-grid gap-2">
+                                    <button class="btn btn-primary btn-lg" id="readBookBtn">
+                                        <i class="fas fa-book-open me-2"></i>Start Reading
+                                    </button>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <button class="btn btn-outline-danger w-100" id="favoriteBtn">
+                                                <i class="fas fa-heart me-1"></i>Favorite
+                                            </button>
+                                        </div>
+                                        <div class="col-6">
+                                            <button class="btn btn-outline-success w-100" id="libraryToggleBtn">
+                                                <i class="fas fa-plus me-1"></i>Library
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <select class="form-select bg-navy text-light" id="statusSelect">
+                                        <option value="To Read">To Read</option>
+                                        <option value="Reading">Reading</option>
+                                        <option value="Finished">Finished</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="col-lg-8">
+                                <div class="book-details">
+                                    <h1 class="text-light mb-2" id="detailTitle"></h1>
+                                    <h4 class="text-muted mb-3" id="detailAuthor"></h4>
+                                    
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="rating me-3" id="detailRating"></div>
+                                        <span class="text-muted" id="detailReviews"></span>
+                                    </div>
+                                    
+                                    <div class="mb-4">
+                                        <span class="badge bg-secondary me-2" id="detailStatus"></span>
+                                        <span class="text-muted" id="detailProgressText"></span>
+                                    </div>
+                                    
+                                    <div class="row mb-4">
+                                        <div class="col-md-6">
+                                            <div class="info-item mb-2">
+                                                <i class="fas fa-file-alt text-muted me-2"></i>
+                                                <span class="text-light">Pages: </span>
+                                                <span class="text-muted" id="detailPages"></span>
+                                            </div>
+                                            <div class="info-item mb-2">
+                                                <i class="fas fa-hashtag text-muted me-2"></i>
+                                                <span class="text-light">ISBN: </span>
+                                                <span class="text-muted" id="detailISBN"></span>
+                                            </div>
+                                            <div class="info-item mb-2">
+                                                <i class="fas fa-globe text-muted me-2"></i>
+                                                <span class="text-light">Language: </span>
+                                                <span class="text-muted" id="detailLanguage"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="info-item mb-2">
+                                                <i class="fas fa-calendar text-muted me-2"></i>
+                                                <span class="text-light">Published: </span>
+                                                <span class="text-muted" id="detailPublished"></span>
+                                            </div>
+                                            <div class="info-item mb-2">
+                                                <i class="fas fa-file text-muted me-2"></i>
+                                                <span class="text-light">Format: </span>
+                                                <span class="badge" id="detailFormat"></span>
+                                            </div>
+                                            <div class="info-item mb-2">
+                                                <span class="text-light">Genre: </span>
+                                                <span class="badge bg-secondary" id="detailGenre"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-4">
+                                        <h3 class="text-light mb-3">Synopsis</h3>
+                                        <p class="text-muted" id="detailSynopsis"></p>
+                                    </div>
+                                    
+                                    <div class="mb-4">
+                                        <h5 class="text-light mb-3">Tags</h5>
+                                        <div id="detailTags"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reader View -->
+                <div id="readerView" class="view-section d-none">
+                    <div class="reader-header bg-navy p-3 border-bottom">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <button class="btn btn-outline-light me-3" id="backToLibraryBtn">
+                                    <i class="fas fa-arrow-left"></i>
+                                </button>
+                                <div>
+                                    <h5 class="text-light mb-0" id="readerTitle"></h5>
+                                    <small class="text-muted" id="readerAuthor"></small>
+                                </div>
+                            </div>
+                            <div class="reader-controls">
+                                <button class="btn btn-outline-light me-2" id="contentsBtn">
+                                    <i class="fas fa-list"></i>
+                                </button>
+                                <button class="btn btn-outline-light me-2" id="bookmarkBtn">
+                                    <i class="fas fa-bookmark"></i>
+                                </button>
+                                <button class="btn btn-outline-light" id="settingsBtn">
+                                    <i class="fas fa-cog"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="progress" style="height: 3px;">
+                        <div class="progress-bar bg-primary" id="readerProgress" role="progressbar"></div>
+                    </div>
+                    
+                    <div class="reader-container d-flex">
+                        <!-- Table of Contents -->
+                        <div class="contents-panel bg-dark-blue p-4 d-none" id="contentsPanel">
+                            <h5 class="text-light mb-4">Table of Contents</h5>
+                            <div class="contents-list" id="contentsList">
+                                <!-- Contents will be populated by JavaScript -->
+                            </div>
+                        </div>
+                        
+                        <!-- Reading Area -->
+                        <div class="reading-area flex-grow-1 d-flex">
+                            <button class="nav-btn nav-prev" id="prevPageBtn">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            
+                            <div class="reading-content flex-grow-1 p-5" id="readingContent">
+                                <div class="chapter-content">
+                                    <!-- Content will be populated by JavaScript -->
+                                </div>
+                            </div>
+                            
+                            <button class="nav-btn nav-next" id="nextPageBtn">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Settings Panel -->
+                        <div class="settings-panel bg-dark-blue p-4 d-none" id="settingsPanel">
+                            <h5 class="text-light mb-4">Reading Settings</h5>
+                            
+                            <div class="mb-4">
+                                <label class="form-label text-light">Font Size</label>
+                                <div class="d-flex align-items-center">
+                                    <button class="btn btn-outline-light btn-sm me-2" id="fontSizeDown">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                    <span class="text-light mx-2" id="fontSizeDisplay">16px</span>
+                                    <button class="btn btn-outline-light btn-sm ms-2" id="fontSizeUp">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="form-label text-light">Font Family</label>
+                                <select class="form-select bg-navy text-light" id="fontFamilySelect">
+                                    <option value="serif">Serif</option>
+                                    <option value="sans-serif">Sans Serif</option>
+                                    <option value="monospace">Monospace</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="form-label text-light">Theme</label>
+                                <div class="row g-2">
+                                    <div class="col-4">
+                                        <button class="btn btn-outline-light w-100 theme-btn" data-theme="light">
+                                            <i class="fas fa-sun mb-1 d-block"></i>
+                                            <small>Light</small>
+                                        </button>
+                                    </div>
+                                    <div class="col-4">
+                                        <button class="btn btn-primary w-100 theme-btn" data-theme="dark">
+                                            <i class="fas fa-moon mb-1 d-block"></i>
+                                            <small>Dark</small>
+                                        </button>
+                                    </div>
+                                    <div class="col-4">
+                                        <button class="btn btn-outline-light w-100 theme-btn" data-theme="sepia">
+                                            <div class="sepia-icon mb-1"></div>
+                                            <small>Sepia</small>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="form-label text-light">Line Height</label>
+                                <input type="range" class="form-range" min="1.2" max="2.0" step="0.1" 
+                                       value="1.6" id="lineHeightRange">
+                                <div class="text-center text-light small" id="lineHeightDisplay">1.6x</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="reader-footer bg-navy p-3 border-top">
+                        <div class="d-flex justify-content-between align-items-center text-light">
+                            <div>Page <span id="currentPage">1</span> of <span id="totalPages">100</span></div>
+                            <div><span id="readingProgress">0</span>% complete</div>
+                            <div><span id="readerFormat">EPUB</span> • <span id="readerPages">300</span> pages</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
